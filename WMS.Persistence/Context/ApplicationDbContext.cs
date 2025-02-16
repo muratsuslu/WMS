@@ -13,6 +13,6 @@ namespace WMS.Persistence.Context
 		public DbSet<OrderSku> OrderSkus {get;set;}
 		public DbSet<Product> Products {get;set;}
 		public DbSet<Sku> Skus {get;set;}
-		public DbSet<Unit> Units {get;set;}
-	}
+        public DbSet<Customer> Customers { get; set; }
+    }
 }

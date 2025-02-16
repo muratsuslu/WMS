@@ -6,11 +6,11 @@ using WMS.Persistence.Context;
 
 namespace WMS.Persistence.Repositories
 {
-	public class OrderSkuRepository : Repository<OrderSku> , IOrderSkuRepository
+	public class CustomerRepository : Repository<Customer>, ICustomerRepository
 	{
 		private readonly IMapper _mapper;
-		public OrderSkuRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
-        {
+		public CustomerRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+		{
 			_mapper = mapper;
 		}
 

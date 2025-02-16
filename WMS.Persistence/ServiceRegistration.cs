@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WMS.Application.Interfaces.Repositories;
 using WMS.Persistence.Context;
+using WMS.Persistence.Mappings;
 using WMS.Persistence.Repositories;
 
 namespace WMS.Persistence
@@ -19,7 +20,8 @@ namespace WMS.Persistence
 			serviceCollection.AddScoped<IOrderSkuRepository, OrderSkuRepository>();
 			serviceCollection.AddScoped<IProductRepository, ProductRepository>();
 			serviceCollection.AddScoped<ISkuRepository, SkuRepository>();
-			serviceCollection.AddScoped<IUnitRepository, UnitRepository>();
+			serviceCollection.AddScoped<ICustomerRepository,CustomerRepository>();
+			serviceCollection.AddAutoMapper(typeof(AutoMapperProfile));
 		}
 	}
 }

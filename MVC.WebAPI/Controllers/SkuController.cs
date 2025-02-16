@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WMS.Application.Dtos.Sku;
+using WMS.Application.Dtos;
 using WMS.Application.Interfaces.Repositories;
+using WMS.Application.Wrappers;
 using WMS.Domain.Entities;
+using WMS.Persistence.Repositories;
 
 namespace WMS.WebAPI.Controllers
 {
@@ -10,23 +12,39 @@ namespace WMS.WebAPI.Controllers
 	[ApiController]
 	public class SkuController : ControllerBase
 	{
-		private readonly ISkuRepository _skuRepository;
-        public SkuController(ISkuRepository skuRepository)
-        {
-            _skuRepository = skuRepository;
-        }
+		ISkuRepository _skuRepository;
 
-		[HttpPost("add-a-sku")]
-		public async Task<IActionResult> AddASku(SkuInsertDto Sku)
+		public SkuController(ISkuRepository skuRepository)
 		{
-			Sku insertedSku = await _skuRepository.AddASku(Sku);
-			if (insertedSku != null)
+			_skuRepository = skuRepository;
+		}
+
+		[HttpGet("list")]
+		public async Task<IActionResult> Get(int skip = 0, int take = 10, string orderBy = "Created", bool desc = false, bool deleted = false)
+		{
+			try
 			{
-				return Ok(insertedSku);
+				var result = await _skuRepository.GetCustomizedListAsync(x => x.IsDeleted == deleted, orderBy, desc, skip, take, "Location","Product");
+				return Ok(BaseResponse<IEnumerable<Sku>>.SuccessResponse(result.ToList(), "The requested list was successfuly fetched."));
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(BaseResponse<IEnumerable<Sku>>.ErrorResponse("An error occured while the list was fetching."));
+			}
+
+		}
+
+		[HttpPost("add")]
+		public async Task<IActionResult> Add(SkuInsertDto Sku)
+		{
+			Sku inserted = await _skuRepository.AddAsync(Sku);
+			if (inserted != null)
+			{
+				return Ok(BaseResponse<Sku>.SuccessResponse(inserted, "The Sku was successfully inserted into the database."));
 			}
 			else
 			{
-				return BadRequest();
+				return BadRequest(BaseResponse<Sku>.ErrorResponse("An error occured while the Sku was inserting into the database"));
 			}
 		}
 	}

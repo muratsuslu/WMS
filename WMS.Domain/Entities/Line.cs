@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using WMS.Domain.Common;
 using WMS.Domain.Enums;
 
@@ -16,6 +17,7 @@ namespace WMS.Domain.Entities
 		public  Product Product { get; set; }
 
 		[ForeignKey("OrderId")]
+		[JsonIgnore]
 		public Order Order { get; set; }
 	}
 }

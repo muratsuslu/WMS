@@ -1,4 +1,5 @@
-﻿using WMS.Domain.Entities;
+﻿using WMS.Application.Dtos;
+using WMS.Domain.Entities;
 
 namespace WMS.Application.Interfaces.Repositories
 {

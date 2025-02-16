@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,17 @@ namespace WMS.Persistence.Repositories
 		where T : BaseEntity
 	
 	{
+		private readonly IMapper _mapper;
 		private readonly ApplicationDbContext _context;
-		public Repository(ApplicationDbContext context)
+		public Repository(ApplicationDbContext context ,IMapper mapper)
 		{
 			_context = context;
+			_mapper = mapper;
+
 			_entitySet = _context.Set<T>();
 		}
 		protected readonly DbSet<T> _entitySet;
-		public async Task<T> AddAsync(T entity)
+		public async Task<T> InsertAsync(T entity)
 		{
 			try
 			{
@@ -39,7 +43,7 @@ namespace WMS.Persistence.Repositories
 			}
 		}
 
-		public async Task AddRangeAsync(IEnumerable<T> entities)
+		public async Task InsertRangeAsync(IEnumerable<T> entities)
 		{
 			try
 			{
@@ -224,6 +228,36 @@ namespace WMS.Persistence.Repositories
 			}
 		}
 
+		public async Task<T> AddAsync<TDto>(TDto dto) where TDto : class
+		{
+			try
+			{
+				var entity = MapToEntity(dto);
+				await InsertAsync(entity);
+				await _context.SaveChangesAsync();
+				return entity;
+			}
+			catch (Exception ex)
+			{
+				return null;
+			}
+		}
+
+		public async Task<T> EditAsync<TDto>(TDto dto) where TDto : class
+		{
+			try
+			{
+				var entity = MapToEntity(dto);
+				await UpdateAsync(entity);
+				await _context.SaveChangesAsync();
+				return entity;
+			}
+			catch (Exception ex)
+			{
+				return null;
+			}
+		}
+
 		private IQueryable<T> CustomOrderBy(IQueryable<T> source, PropertyInfo propertyInfo, bool desc)
 		{
 			if (propertyInfo == null)
@@ -240,5 +274,12 @@ namespace WMS.Persistence.Repositories
 										  source.Expression, Expression.Quote(orderByExpression));
 			return source.Provider.CreateQuery<T>(resultExpression);
 		}
+
+		private T MapToEntity<TDto>(TDto dto) where TDto : class
+		{
+			return _mapper.Map<T>(dto);
+		}
+
+
 	}
 }

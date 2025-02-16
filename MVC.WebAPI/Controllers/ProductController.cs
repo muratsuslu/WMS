@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using WMS.Application.Dtos.Product;
+﻿using Microsoft.AspNetCore.Mvc;
+using WMS.Application.Dtos;
 using WMS.Application.Interfaces.Repositories;
 using WMS.Application.Wrappers;
 using WMS.Domain.Entities;
+using WMS.Persistence.Repositories;
 
 namespace MVC.WebAPI.Controllers
 {
@@ -20,10 +18,25 @@ namespace MVC.WebAPI.Controllers
 			_productRepository = productRepository;
 		}
 
-		[HttpPost("add-a-product")]
-		public async Task<IActionResult> AddAProduct(ProductInsertDto product)
+		[HttpGet("list")]
+		public async Task<IActionResult> Get(int skip = 0, int take = 10, string orderBy = "Created", bool desc = false, bool deleted = false)
 		{
-			Product insertedProduct = await _productRepository.AddAProduct(product);
+			try
+			{
+				var result = await _productRepository.GetCustomizedListAsync(x => x.IsDeleted == deleted, orderBy, desc, skip, take);
+				return Ok(BaseResponse<IEnumerable<Product>>.SuccessResponse(result.ToList(), "The requested list was successfuly fetched."));
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(BaseResponse<IEnumerable<Product>>.ErrorResponse("An error occured while the list was fetching."));
+			}
+
+		}
+
+		[HttpPost("add")]
+		public async Task<IActionResult> Add(ProductInsertDto product)
+		{
+			Product insertedProduct = await _productRepository.AddAsync(product);
 			if (insertedProduct != null)
 			{
 				return Ok(BaseResponse<Product>.SuccessResponse(insertedProduct,"The product was successfully inserted into the database."));

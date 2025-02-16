@@ -11,6 +11,5 @@ namespace WMS.Application.Interfaces.Context
         public DbSet<OrderSku> OrderSkus { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Sku> Skus { get; set; }
-        public DbSet<Unit> Units { get; set; }
     }
 }
