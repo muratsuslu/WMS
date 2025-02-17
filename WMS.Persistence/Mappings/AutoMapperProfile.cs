@@ -35,9 +35,9 @@ namespace WMS.Persistence.Mappings
 			CreateMap<ProductUpdateDto, Product>();
 
 			// OrderSku Mappings
-			CreateMap<OrderSkuInsertDto, OrderSku>()
+			CreateMap<AllocationInsertDto, Allocation>()
 				.ForMember(dest => dest.Created, opt => opt.MapFrom(_ => DateTime.UtcNow));
-			CreateMap<OrderSkuUpdateDto, OrderSku>();
+			CreateMap<AllocationUpdateDto, Allocation>();
 
 			// Sku Mappings
 			CreateMap<SkuInsertDto, Sku>()

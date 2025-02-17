@@ -4,8 +4,7 @@
 	{
 		Created = 0,
 		IsAllocated = 1,
-		IsUnallocated = 2,
-		Updated = 3,
-		Cancelled = 4
+		IsNotallocated = 2,
+		Cancelled = 3
 	}
 }

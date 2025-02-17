@@ -4,14 +4,14 @@ using WMS.Domain.Enums;
 
 namespace WMS.Domain.Entities
 {
-	public class OrderSku : BaseEntity
+	public class Allocation : BaseEntity
 	{
-        public Guid OrderId { get; set; }
+        public Guid LineId { get; set; }
         public Guid SkuId { get; set; }
-        public OrderSkuStatus OrderSkuStatus { get; set; }
+        public AllocationStatus AllocationStatus { get; set; }
 
-		[ForeignKey("OrderId")]
-		public Order Order { get; set; }
+		[ForeignKey("LineId")]
+		public  Line Line {get; set; }
 
 		[ForeignKey("SkuId")]
 		public Sku Sku { get; set; }

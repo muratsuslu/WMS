@@ -84,9 +84,26 @@ namespace WMS.Persistence.Repositories
 		{
 			try
 			{
-				var data = filter == null
-					? await _entitySet.ToListAsync()
-					: await _entitySet.Where(filter).ToListAsync();
+				// For FIFO Operations
+				IQueryable<T> query = _entitySet.OrderBy(x => x.Created);
+
+				// Include navigation properties if any tables are specified
+				if (tables != null && tables.Length > 0)
+				{
+					foreach (var table in tables)
+					{
+						query = query.Include(table);
+					}
+				}
+
+				// Apply the filter if provided
+				if (filter != null)
+				{
+					query = query.Where(filter);
+				}
+
+				// Execute the query and return the results
+				var data = await query.ToListAsync();
 				return data;
 			}
 			catch (Exception ex)
@@ -141,7 +158,8 @@ namespace WMS.Persistence.Repositories
 		{
 			try
 			{
-				IQueryable<T> query = _entitySet;
+				//For FIFO Operations
+				IQueryable<T> query = _entitySet.OrderBy(x=>x.Created);
 
 				// Include navigation properties if any tables are specified
 				if (tables != null && tables.Length > 0)

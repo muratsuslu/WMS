@@ -83,7 +83,7 @@ namespace WMS.Persistence.Migrations
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,13 +108,13 @@ namespace WMS.Persistence.Migrations
                         column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Skus_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -124,6 +124,7 @@ namespace WMS.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SkuId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     LineStatus = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -139,23 +140,28 @@ namespace WMS.Persistence.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Lines_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_Lines_Skus_SkuId",
+                        column: x => x.SkuId,
+                        principalTable: "Skus",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderSkus",
+                name: "Allocations",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SkuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderSkuStatus = table.Column<int>(type: "int", nullable: false),
+                    AllocationStatus = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Deleted = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -163,20 +169,30 @@ namespace WMS.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderSkus", x => x.Id);
+                    table.PrimaryKey("PK_Allocations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderSkus_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
+                        name: "FK_Allocations_Lines_LineId",
+                        column: x => x.LineId,
+                        principalTable: "Lines",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_OrderSkus_Skus_SkuId",
+                        name: "FK_Allocations_Skus_SkuId",
                         column: x => x.SkuId,
                         principalTable: "Skus",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Allocations_LineId",
+                table: "Allocations",
+                column: "LineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Allocations_SkuId",
+                table: "Allocations",
+                column: "SkuId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lines_OrderId",
@@ -189,19 +205,14 @@ namespace WMS.Persistence.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Lines_SkuId",
+                table: "Lines",
+                column: "SkuId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderSkus_OrderId",
-                table: "OrderSkus",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderSkus_SkuId",
-                table: "OrderSkus",
-                column: "SkuId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Skus_LocationId",
@@ -218,10 +229,10 @@ namespace WMS.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Lines");
+                name: "Allocations");
 
             migrationBuilder.DropTable(
-                name: "OrderSkus");
+                name: "Lines");
 
             migrationBuilder.DropTable(
                 name: "Orders");

@@ -22,6 +22,42 @@ namespace WMS.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("WMS.Domain.Entities.Allocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AllocationStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Deleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SkuId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LineId");
+
+                    b.HasIndex("SkuId");
+
+                    b.ToTable("Allocations");
+                });
+
             modelBuilder.Entity("WMS.Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -80,6 +116,9 @@ namespace WMS.Persistence.Migrations
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("SkuId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
@@ -88,6 +127,8 @@ namespace WMS.Persistence.Migrations
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("SkuId");
 
                     b.ToTable("Lines");
                 });
@@ -159,42 +200,6 @@ namespace WMS.Persistence.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("WMS.Domain.Entities.OrderSku", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Deleted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("OrderSkuStatus")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("SkuId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("SkuId");
-
-                    b.ToTable("OrderSkus");
-                });
-
             modelBuilder.Entity("WMS.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -261,6 +266,25 @@ namespace WMS.Persistence.Migrations
                     b.ToTable("Skus");
                 });
 
+            modelBuilder.Entity("WMS.Domain.Entities.Allocation", b =>
+                {
+                    b.HasOne("WMS.Domain.Entities.Line", "Line")
+                        .WithMany()
+                        .HasForeignKey("LineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WMS.Domain.Entities.Sku", "Sku")
+                        .WithMany()
+                        .HasForeignKey("SkuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Line");
+
+                    b.Navigation("Sku");
+                });
+
             modelBuilder.Entity("WMS.Domain.Entities.Line", b =>
                 {
                     b.HasOne("WMS.Domain.Entities.Order", "Order")
@@ -275,9 +299,15 @@ namespace WMS.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WMS.Domain.Entities.Sku", "Sku")
+                        .WithMany()
+                        .HasForeignKey("SkuId");
+
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+
+                    b.Navigation("Sku");
                 });
 
             modelBuilder.Entity("WMS.Domain.Entities.Order", b =>
@@ -289,25 +319,6 @@ namespace WMS.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("WMS.Domain.Entities.OrderSku", b =>
-                {
-                    b.HasOne("WMS.Domain.Entities.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WMS.Domain.Entities.Sku", "Sku")
-                        .WithMany()
-                        .HasForeignKey("SkuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Sku");
                 });
 
             modelBuilder.Entity("WMS.Domain.Entities.Sku", b =>

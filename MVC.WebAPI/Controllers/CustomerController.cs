@@ -12,7 +12,7 @@ namespace WMS.WebAPI.Controllers
 	[ApiController]
 	public class CustomerController : ControllerBase
 	{
-		ICustomerRepository _customerRepository;
+		protected readonly ICustomerRepository _customerRepository;
 
 		public CustomerController(ICustomerRepository customerRepository)
 		{

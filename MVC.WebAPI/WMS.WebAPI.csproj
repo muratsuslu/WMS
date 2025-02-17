@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WMS.Application\WMS.Application.csproj" />
+    <ProjectReference Include="..\WMS.Infrastructure\WMS.Infrastructure.csproj" />
     <ProjectReference Include="..\WMS.Persistence\WMS.Persistence.csproj" />
   </ItemGroup>
 

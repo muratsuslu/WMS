@@ -6,10 +6,10 @@ using WMS.Persistence.Context;
 
 namespace WMS.Persistence.Repositories
 {
-	public class OrderSkuRepository : Repository<OrderSku> , IOrderSkuRepository
+	public class AllocationRepository : Repository<Allocation> , IAllocationRepository
 	{
 		private readonly IMapper _mapper;
-		public OrderSkuRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+		public AllocationRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
 			_mapper = mapper;
 		}

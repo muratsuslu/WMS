@@ -17,7 +17,7 @@ namespace WMS.Persistence
 			serviceCollection.AddScoped<ILineRepository, LineRepository>();
 			serviceCollection.AddScoped<ILocationRepository, LocationRepository>();
 			serviceCollection.AddScoped<IOrderRepository, OrderRepository>();
-			serviceCollection.AddScoped<IOrderSkuRepository, OrderSkuRepository>();
+			serviceCollection.AddScoped<IAllocationRepository, AllocationRepository>();
 			serviceCollection.AddScoped<IProductRepository, ProductRepository>();
 			serviceCollection.AddScoped<ISkuRepository, SkuRepository>();
 			serviceCollection.AddScoped<ICustomerRepository,CustomerRepository>();

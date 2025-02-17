@@ -10,8 +10,12 @@ namespace WMS.Domain.Entities
 
         public Guid ProductId { get; set; }
 		public Guid OrderId { get; set; }
-		public decimal Quantity { get; set; }
+        public Guid? SkuId { get; set; }
+        public decimal Quantity { get; set; }
         public LineStatus LineStatus { get; set; }
+
+		[ForeignKey("SkuId")]
+		public Sku Sku { get; set; }
 
 		[ForeignKey("ProductId")]
 		public  Product Product { get; set; }

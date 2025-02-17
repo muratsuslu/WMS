@@ -11,7 +11,7 @@ namespace MVC.WebAPI.Controllers
 	[ApiController]
 	public class ProductController : ControllerBase
 	{
-		IProductRepository _productRepository;
+		protected readonly IProductRepository _productRepository;
 
 		public ProductController(IProductRepository productRepository)
 		{

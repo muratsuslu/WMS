@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WMS.Application.Dtos;
 using WMS.Application.Interfaces.Repositories;
+using WMS.Application.Interfaces.Services;
 using WMS.Application.Wrappers;
 using WMS.Domain.Entities;
 using WMS.Persistence.Repositories;
@@ -12,11 +13,13 @@ namespace WMS.WebAPI.Controllers
 	[ApiController]
 	public class SkuController : ControllerBase
 	{
-		ISkuRepository _skuRepository;
+		protected readonly ISkuRepository _skuRepository;
+		protected readonly ICorrectionService _correctionService;
 
-		public SkuController(ISkuRepository skuRepository)
+		public SkuController(ISkuRepository skuRepository, ICorrectionService correctionService)
 		{
 			_skuRepository = skuRepository;
+			_correctionService = correctionService;
 		}
 
 		[HttpGet("list")]
@@ -45,6 +48,20 @@ namespace WMS.WebAPI.Controllers
 			else
 			{
 				return BadRequest(BaseResponse<Sku>.ErrorResponse("An error occured while the Sku was inserting into the database"));
+			}
+		}
+
+		[HttpPost("correct-sku")]
+		public async Task<IActionResult> Add(Guid skuId, decimal amount)
+		{
+			var result = await _correctionService.CorrectSku(skuId, amount);
+			if (result != null)
+			{
+				return Ok(ServiceReturnDto<Sku>.SuccessResponse(result.Data, "The Sku was successfully inserted into the database."));
+			}
+			else
+			{
+				return BadRequest(ServiceReturnDto<Sku>.ErrorResponse("An error occured while the Sku was inserting into the database"));
 			}
 		}
 	}

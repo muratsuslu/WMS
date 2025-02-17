@@ -11,7 +11,7 @@ namespace WMS.WebAPI.Controllers
 	[ApiController]
 	public class LocationController : ControllerBase
 	{
-		ILocationRepository _locationRepository;
+		protected readonly ILocationRepository _locationRepository;
 
 		public LocationController(ILocationRepository locationRepository)
 		{
